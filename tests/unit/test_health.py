@@ -30,5 +30,5 @@ def test_health_database_failure_returns_safe_503(monkeypatch, failure):
 def test_health_success(monkeypatch):
     monkeypatch.setattr(database, "check_database", Mock(return_value=True))
     response = TestClient(app).get("/health")
-    assert response.status_code == 200
+    assert response.status_code == 201
     assert response.json() == {"status": "ok", "database": "ok"}
