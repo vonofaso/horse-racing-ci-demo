@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Информационная система учёта скачек">
+  <title>Ипподром — управление скачками</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <main id="auth-view" class="auth-shell">
+    <section class="auth-intro">
+      <a class="brand brand-light" href="/" aria-label="Ипподром">
+        <span class="brand-mark">И</span>
+        <span>ИППОДРОМ</span>
+      </a>
+      <div class="auth-copy">
+        <p class="eyebrow">Информационная система</p>
+        <h1>Каждый финиш<br>под контролем</h1>
+        <p>Единое пространство для учёта лошадей, участников, стартов и результатов соревнований.</p>
+      </div>
+      <div class="auth-metrics" aria-label="Возможности системы">
+        <span>01&nbsp;&nbsp;Участники</span>
+        <span>02&nbsp;&nbsp;Заезды</span>
+        <span>03&nbsp;&nbsp;Результаты</span>
+      </div>
+    </section>
+
+    <section class="auth-panel">
+      <div class="auth-card">
+        <p class="eyebrow dark">Личный кабинет</p>
+        <h2 id="auth-title">С возвращением</h2>
+        <p id="auth-subtitle" class="muted">Войдите, чтобы продолжить работу</p>
+
+        <form id="login-form" class="stack-form">
+          <label>Логин<input name="username" autocomplete="username" minlength="3" required></label>
+          <label>Пароль<input name="password" type="password" autocomplete="current-password" required></label>
+          <button class="button primary wide" type="submit">Войти в систему</button>
+        </form>
+
+        <form id="register-form" class="stack-form hidden">
+          <label>Логин<input name="username" autocomplete="username" minlength="3" maxlength="40" required></label>
+          <label>Электронная почта<input name="email" type="email" autocomplete="email" required></label>
+          <label>Пароль<input name="password" type="password" autocomplete="new-password" minlength="8" required></label>
+          <button class="button primary wide" type="submit">Создать аккаунт</button>
+        </form>
+
+        <p class="auth-switch"><span id="switch-question">Нет аккаунта?</span> <button id="switch-auth" class="link-button" type="button">Зарегистрироваться</button></p>
+      </div>
+    </section>
+  </main>
+
+  <div id="app-view" class="app-shell hidden">
+    <aside class="sidebar">
+      <a class="brand" href="#overview"><span class="brand-mark">И</span><span>ИППОДРОМ</span></a>
+      <nav id="navigation" aria-label="Основная навигация">
+        <button class="nav-item active" data-view="overview"><span>⌂</span>Обзор</button>
+        <button class="nav-item" data-view="competitions"><span>◫</span>Состязания</button>
+        <button class="nav-item" data-view="horses"><span>♞</span>Лошади</button>
+        <button class="nav-item" data-view="jockeys"><span>♟</span>Жокеи</button>
+        <button class="nav-item" data-view="owners"><span>◎</span>Владельцы</button>
+        <button class="nav-item" data-view="results"><span>✓</span>Результаты</button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-chip"><span id="user-avatar">А</span><div><strong id="user-name">Пользователь</strong><small id="user-email"></small></div></div>
+        <button id="logout-button" class="logout" type="button">Выйти</button>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <button id="menu-button" class="menu-button" type="button" aria-label="Открыть меню">☰</button>
+        <div><p class="eyebrow dark">Сезон 2026</p><h1 id="page-title">Обзор</h1></div>
+        <div class="topbar-actions"><span id="today"></span><button id="add-button" class="button primary" type="button">+ Добавить запись</button></div>
+      </header>
+
+      <main class="content">
+        <section id="overview" class="view active-view">
+          <div id="stats" class="stats-grid"></div>
+          <div class="overview-grid">
+            <article class="panel hero-panel">
+              <div><p class="eyebrow">Ближайшие события</p><h2>Календарь состязаний</h2></div>
+              <div id="upcoming-list" class="event-list"></div>
+            </article>
+            <article class="panel compact-panel">
+              <div class="panel-heading"><div><p class="eyebrow dark">Последние данные</p><h2>Результаты</h2></div><button class="text-action" data-go="results">Все результаты →</button></div>
+              <div id="latest-results" class="result-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="entity-view" class="view">
+          <div class="table-toolbar">
+            <div class="search"><span>⌕</span><input id="search-input" type="search" placeholder="Поиск по записям"></div>
+            <span id="record-count" class="record-count"></span>
+          </div>
+          <div class="table-wrap"><table><thead id="table-head"></thead><tbody id="table-body"></tbody></table></div>
+          <div id="empty-state" class="empty-state hidden"><span>◇</span><h2>Пока нет записей</h2><p>Добавьте первую запись в этот раздел.</p></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <dialog id="entity-dialog">
+    <form id="entity-form" method="dialog">
+      <div class="dialog-head"><div><p class="eyebrow dark">Карточка данных</p><h2 id="dialog-title">Новая запись</h2></div><button id="dialog-close" class="icon-button" type="button" aria-label="Закрыть">×</button></div>
+      <div id="form-fields" class="form-grid"></div>
+      <div class="dialog-actions"><button id="cancel-button" class="button secondary" type="button">Отмена</button><button class="button primary" type="submit">Сохранить</button></div>
+    </form>
+  </dialog>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "--strict-markers --import-mode=importlib"
+markers = [
+    "unit: проверки без подключения к PostgreSQL",
+    "integration: проверки с настоящей PostgreSQL в изолированной схеме",
+]
+
+[tool.coverage.run]
+source = ["app", "scripts"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 40
+show_missing = true
+
+[tool.ruff]
+target-version = "py38"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

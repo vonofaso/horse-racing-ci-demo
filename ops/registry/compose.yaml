@@ -1,0 +1,29 @@
+name: horse-racing-registry
+
+services:
+  registry:
+    image: registry:3.0.0@sha256:6c5666b861f3505b116bb9aa9b25175e71210414bd010d92035ff64018f9457e
+    restart: unless-stopped
+    environment:
+      OTEL_TRACES_EXPORTER: none
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Horse Racing
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+      REGISTRY_HTTP_TLS_CERTIFICATE: /tls/registry.crt
+      REGISTRY_HTTP_TLS_KEY: /tls/registry.key
+    ports:
+      - '127.0.0.1:5500:5000'
+    volumes:
+      - registry-data:/var/lib/registry
+      - ${HORSE_REGISTRY_CONFIG:?Set HORSE_REGISTRY_CONFIG}/auth:/auth:ro
+      - ${HORSE_REGISTRY_CONFIG:?Set HORSE_REGISTRY_CONFIG}/tls:/tls:ro
+    networks:
+      registry:
+        aliases: [horse-registry]
+
+networks:
+  registry:
+    name: horse-racing-registry
+
+volumes:
+  registry-data:

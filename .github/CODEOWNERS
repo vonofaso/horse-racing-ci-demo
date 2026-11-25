@@ -1,0 +1,34 @@
+# Pipeline, команды CI и правила владения кодом.
+/.github/ @01101111000 @vonofaso
+
+# Тесты, команды приёмки и настройки анализаторов.
+/tests/ @01101111000 @vonofaso
+/scripts/ @01101111000 @vonofaso
+/Makefile @01101111000 @vonofaso
+pyproject.toml @01101111000 @vonofaso
+ruff.toml @01101111000 @vonofaso
+.ruff.toml @01101111000 @vonofaso
+/.bandit* @01101111000 @vonofaso
+/.gitleaks* @01101111000 @vonofaso
+/.trivyignore* @01101111000 @vonofaso
+/trivy.yaml @01101111000 @vonofaso
+/trivy-secret.yaml @01101111000 @vonofaso
+/pytest.ini @01101111000 @vonofaso
+/tox.ini @01101111000 @vonofaso
+/setup.cfg @01101111000 @vonofaso
+/.coveragerc @01101111000 @vonofaso
+
+# Зависимости, контейнерная приёмка и правила команды.
+/requirements*.txt @01101111000 @vonofaso
+/requirements.lock @01101111000 @vonofaso
+/.python-version @01101111000 @vonofaso
+/Dockerfile @01101111000 @vonofaso
+/.dockerignore @01101111000 @vonofaso
+/.gitignore @01101111000 @vonofaso
+/compose.yaml @01101111000 @vonofaso
+/compose.env.example @01101111000 @vonofaso
+/app/database.py @01101111000 @vonofaso
+/ops/ @01101111000 @vonofaso
+/docs/contributing.md @01101111000 @vonofaso
+/docs/quality-policy.md @01101111000 @vonofaso
+/docs/lab4-container-policy.md @01101111000 @vonofaso

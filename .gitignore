@@ -1,0 +1,45 @@
+# Переменные окружения и секреты
+.env
+.env.*
+!.env.example
+
+# Виртуальные окружения Python
+.venv/
+venv/
+env/
+
+# Кеш и скомпилированные файлы Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Отчёты тестов и покрытия
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Дампы PostgreSQL
+backups/
+*.dump
+*.sql.gz
+
+# Временные рабочие файлы
+work/
+outputs/
+*.log
+
+# Редакторы и операционные системы
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Отчёты всех проверок
+reports/
+.ci-cache/
+.ci-state/

@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Check / ${{ matrix.stage }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        stage: [style, tests, migrations, backup, security, container]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: ${{ matrix.stage == 'security' && '0' || '1' }}
+      - name: Restore pip cache
+        id: pip-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .ci-cache/pip
+          key: pip-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('.github/ci/Dockerfile', 'requirements*.txt', 'requirements.lock') }}
+      - name: Record pip cache result
+        env:
+          CACHE_HIT: ${{ steps.pip-cache.outputs.cache-hit }}
+        run: printf 'pip cache hit = %s\n' "$CACHE_HIT"
+      - name: Start nested Docker daemon
+        run: .github/ci/dind.sh start
+      - name: Run ${{ matrix.stage }} in DinD
+        env:
+          CI_STAGE: ${{ matrix.stage }}
+        run: .github/ci/dind.sh check "$CI_STAGE"
+      - name: Upload check reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: reports-${{ matrix.stage }}-${{ github.run_attempt }}
+          path: reports/
+          if-no-files-found: error
+          retention-days: 7
+      - name: Stop DinD
+        if: ${{ always() }}
+        run: .github/ci/dind.sh stop
+
+  build:
+    name: Build and scan image
+    needs: verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Start nested Docker daemon
+        run: .github/ci/dind.sh start
+      - name: Build SHA-tagged image in DinD
+        run: .github/ci/dind.sh build "$GITHUB_SHA"
+      - name: Verify the runner can read the image archive
+        run: tar -tf ".ci-state/image-$GITHUB_SHA.tar" > /dev/null
+      - name: Scan the built image in DinD
+        run: .github/ci/dind.sh scan "$GITHUB_SHA"
+      - name: Upload image scan report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: report-image-${{ github.run_attempt }}
+          path: reports/image.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Stop DinD
+        if: ${{ always() }}
+        run: .github/ci/dind.sh stop
+
+  required:
+    name: CI required
+    if: ${{ always() }}
+    needs: [verify, build]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Reject failed, skipped or cancelled dependencies
+        if: ${{ always() && (needs.verify.result != 'success' || needs.build.result != 'success') }}
+        run: exit 1
+      - name: Record successful dependencies
+        if: needs.verify.result == 'success' && needs.build.result == 'success'
+        run: echo 'All checks and the image scan passed'

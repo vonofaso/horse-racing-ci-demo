@@ -1,0 +1,10 @@
+**
+!requirements.lock
+!app/
+!app/**
+!scripts/
+!scripts/__init__.py
+!scripts/db_tools.py
+!scripts/container_health.py
+**/__pycache__/
+**/*.pyc
