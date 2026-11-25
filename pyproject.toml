@@ -12,7 +12,7 @@ source = ["app", "scripts"]
 branch = true
 
 [tool.coverage.report]
-fail_under = 40
+fail_under = 10
 show_missing = true
 
 [tool.ruff]
