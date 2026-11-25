@@ -350,3 +350,5 @@ RESTORE_DATABASE_URL='postgresql://horse:YOUR_PASSWORD@127.0.0.1:5432/horse_rest
 `YOUR_PASSWORD` — заглушка. Не путайте эти команды с `container-*`, которые
 используют подключение и утилиты внутри выбранного Compose-проекта.
 Описание миграций: [docs/lab3-migrations.md](docs/lab3-migrations.md).
+
+Изменения основной ветки принимаются через Pull Request после успешного CI и проверки вторым участником.
